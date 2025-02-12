@@ -31,10 +31,9 @@
 #define DISPLAY_IR_FUNCTION_SET_5x10DOTS 0b00000100
 #define DISPLAY_IR_FUNCTION_SET_5x8DOTS  0b00000000
 
-#define DISPLAY_20x4_LINE1_FIRST_CHARACTER_ADDRESS 0
-#define DISPLAY_20x4_LINE2_FIRST_CHARACTER_ADDRESS 64
-#define DISPLAY_20x4_LINE3_FIRST_CHARACTER_ADDRESS 20
-#define DISPLAY_20x4_LINE4_FIRST_CHARACTER_ADDRESS 84
+// Remove the 20×4 line addresses and add 16×2 line addresses
+#define DISPLAY_16x2_LINE1_FIRST_CHARACTER_ADDRESS 0x00
+#define DISPLAY_16x2_LINE2_FIRST_CHARACTER_ADDRESS 0x40
 
 #define DISPLAY_RS_INSTRUCTION 0
 #define DISPLAY_RS_DATA        1
@@ -135,38 +134,26 @@ void displayInit()
 }
 
 void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
-{    
+{
     switch( charPositionY ) {
         case 0:
             displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
                               DISPLAY_IR_SET_DDRAM_ADDR |
-                              ( DISPLAY_20x4_LINE1_FIRST_CHARACTER_ADDRESS +
+                              ( DISPLAY_16x2_LINE1_FIRST_CHARACTER_ADDRESS +
                                 charPositionX ) );
-            delay( 1 );         
+            delay(1);
         break;
-       
+
         case 1:
             displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
                               DISPLAY_IR_SET_DDRAM_ADDR |
-                              ( DISPLAY_20x4_LINE2_FIRST_CHARACTER_ADDRESS +
+                              ( DISPLAY_16x2_LINE2_FIRST_CHARACTER_ADDRESS +
                                 charPositionX ) );
-            delay( 1 );         
-        break;
-       
-        case 2:
-            displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
-                              DISPLAY_IR_SET_DDRAM_ADDR |
-                              ( DISPLAY_20x4_LINE3_FIRST_CHARACTER_ADDRESS +
-                                charPositionX ) );
-            delay( 1 );         
+            delay(1);
         break;
 
-        case 3:
-            displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
-                              DISPLAY_IR_SET_DDRAM_ADDR |
-                              ( DISPLAY_20x4_LINE4_FIRST_CHARACTER_ADDRESS +
-                                charPositionX ) );
-            delay( 1 );         
+        // For a 16×2, lines 2 and 3 don't apply
+        default:
         break;
     }
 }

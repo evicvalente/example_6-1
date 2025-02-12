@@ -132,52 +132,49 @@ static void userInterfaceMatrixKeypadUpdate()
 static void userInterfaceDisplayInit()
 {
     displayInit();
-     
-    displayCharPositionWrite ( 0,0 );
-    displayStringWrite( "Temperature:" );
 
-    displayCharPositionWrite ( 0,1 );
-    displayStringWrite( "Gas:" );
-    
-    displayCharPositionWrite ( 0,2 );
-    displayStringWrite( "Alarm:" );
+    // First line: headings for temperature & gas
+    displayCharPositionWrite(0, 0);
+    displayStringWrite("Tmp:     Gas:");
+
+    // Second line: heading for alarm
+    displayCharPositionWrite(0, 1);
+    displayStringWrite("Alarm:");
 }
 
 static void userInterfaceDisplayUpdate()
 {
     static int accumulatedDisplayTime = 0;
-    char temperatureString[3] = "";
-    
-    if( accumulatedDisplayTime >=
-        DISPLAY_REFRESH_TIME_MS ) {
+    char temperatureString[4] = "";  // e.g. up to "100"
 
+    if( accumulatedDisplayTime >= DISPLAY_REFRESH_TIME_MS ) {
         accumulatedDisplayTime = 0;
 
-        sprintf(temperatureString, "%.0f", temperatureSensorReadCelsius());
-        displayCharPositionWrite ( 12,0 );
+        // Write temperature in Celsius
+        sprintf( temperatureString, "%.0f", temperatureSensorReadCelsius() );
+        displayCharPositionWrite(5, 0);  // after "Tmp: "
         displayStringWrite( temperatureString );
-        displayCharPositionWrite ( 14,0 );
-        displayStringWrite( "'C" );
+        displayCharPositionWrite(7, 0);
+        displayStringWrite("'C");
 
-        displayCharPositionWrite ( 4,1 );
-
+        // Write Gas status at end of first line
+        displayCharPositionWrite(12, 0);
         if ( gasDetectorStateRead() ) {
-            displayStringWrite( "Detected    " );
+            displayStringWrite("D ");
         } else {
-            displayStringWrite( "Not Detected" );
+            displayStringWrite("ND");
         }
 
-        displayCharPositionWrite ( 6,2 );
-        
+        // Second line for alarm status
+        displayCharPositionWrite(7, 1);  // after "Alarm:"
         if ( sirenStateRead() ) {
-            displayStringWrite( "ON " );
+            displayStringWrite("ON ");
         } else {
-            displayStringWrite( "OFF" );
+            displayStringWrite("OFF");
         }
 
     } else {
-        accumulatedDisplayTime =
-            accumulatedDisplayTime + SYSTEM_TIME_INCREMENT_MS;        
+        accumulatedDisplayTime += SYSTEM_TIME_INCREMENT_MS;
     } 
 }
 
